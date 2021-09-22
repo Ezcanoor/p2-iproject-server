@@ -2,9 +2,13 @@ const express = require('express')
 const { authentication } = require('../middleware/authentication')
 const router = express.Router()
 const userRouter = require('./userRouter')
-const charRouter = require('./chatRouter')
+const chatRouter = require('./chatRouter')
 
 router.use(userRouter)
 router.use(authentication)
-router.use(charRouter)
+router.get('/customer', (req, res) => {
+  res.send('hellow')
+})
+router.use(chatRouter)
+
 module.exports = router

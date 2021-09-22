@@ -1,8 +1,9 @@
 const { verify } = require("../helper/jwt")
 
-const authentication = (res, req, next) => {
-  const token = req.headers.access_token
+const authentication = (req, res, next) => {
+
   try {
+    const token = req.headers.access_token;
     const checkToken = verify(token)
     if (!checkToken){
       res.status(403).json({message : 'Do me a favor, pls login with registered user'})
