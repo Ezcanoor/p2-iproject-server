@@ -6,7 +6,6 @@ let baseUrl = `https://api.talkjs.com/v1/${APP_ID}`
 class ChatController{
   static  async createConversation(req, res){
       try {
-        
         const conversationId = req.body.conversationId
         const chat = await axios.put(
           `${baseUrl}/conversations/${conversationId}`,
@@ -25,6 +24,21 @@ class ChatController{
         res.status(500).json(error.message)
       }
 
+  }
+  
+  static async deleteConversation(req, res){
+    try {
+      const conversationId = req.body.conversationId
+      const terminated = await axios.delete(
+        `${baseUrl}/conversations/${conversationId}`,
+        { headers: {
+          Authorization: `Bearer ${TALK_JS_SECRET}`
+        }}
+      )
+      res.status(200).json({message: `success delete conversattion with id ${conversationId}`})
+    } catch (error) {
+      res.status(500).json(error.message)
+    }
   }
 
   
