@@ -11,10 +11,16 @@ class UserController{
         gender: req.body.gender,
         state: req.body.state
       }
+      console.log(payload);
 
-      
+      const user = await User.create(payload)
+      res.status(201).json({
+        id: user.id,
+        name: user.name,
+        email: user.email
+      })
     } catch (error) {
-      
+      res.status(500).json(error.message)
     }
   }
 
