@@ -20,7 +20,7 @@ class UserController{
 
       const user = await User.create(payload)
       const talkJsRegist = await axios.put(
-        'https://api.talkjs.com/v1/tFEb2D5i/users/20',
+        `${baseUrl}/${user.id}`,
         {
           name: user.name,
           email: [user.email]
