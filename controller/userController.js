@@ -1,6 +1,10 @@
+const axios = require('axios')
 const { sign } = require('../helper/jwt')
 const { decode } = require('../helper/bcrypt')
 const { User } = require('../models')
+const APP_ID = process.env.APP_ID
+const TALK_JS_SECRET = process.env.TALK_JS_SECRET
+let baseUrl = `https://api.talkjs.com/v1/${APP_ID}/users`
 
 class UserController{
   
@@ -15,12 +19,24 @@ class UserController{
       }
 
       const user = await User.create(payload)
+      const talkJsRegist = await axios.put(
+        `${baseUrl}/${user.id}`,
+        {
+          name: user.name,
+          email: [user.email]
+        },
+        { headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${TALK_JS_SECRET}`
+        }}
+      )
       res.status(201).json({
         id: user.id,
         name: user.name,
         email: user.email
       })
     } catch (error) {
+      console.log(error);
       res.status(500).json(error.message)
     }
   }
