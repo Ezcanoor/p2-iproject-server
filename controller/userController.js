@@ -5,6 +5,8 @@ const { User } = require('../models')
 const APP_ID = process.env.APP_ID
 const TALK_JS_SECRET = process.env.TALK_JS_SECRET
 let baseUrl = `https://api.talkjs.com/v1/${APP_ID}/users`
+const {OAuth2Client} = require('google-auth-library');
+const client = new OAuth2Client(process.env.AUDIANCE);
 
 class UserController{
   
@@ -63,13 +65,47 @@ class UserController{
         email: user.email
       }
       const token = sign(payload)
-      res.status(200).json({access_token: token})
+      res.status(200).json({access_token: token, id: user.id, name:user.name, email: user.email})
 
     } catch (error) {
       // console.log(error);
       res.status(500).json(error.message)
     }
   } 
+
+  static async oath(req, res, next){
+    try {
+      const ticket = await client.verifyIdToken({
+        idToken: req.body.token,
+        audience: process.env.AUDIANCE
+      });
+
+      const payload = ticket.getPayload();
+      const data = {
+        name: payload.name,
+        email: payload.email,
+        password: '123456',
+        gender: 'male',
+        state: 'Bandung'
+      }
+      const user = await User.findOrCreate({
+        where: {
+          email: payload.email
+        },
+        defaults: data
+      })
+
+      const access_token = sign({
+        id: user[0].id,
+        email: user[0].email,
+        name: user[0].name,
+      })
+
+      res.status(200).json({access_token, id: user[0].id, email: user[0].email, name: user[0].name})
+    } catch (err) {
+      next(err)
+    }
+  }
 }
 
 module.exports = UserController
