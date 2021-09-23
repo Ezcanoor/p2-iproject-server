@@ -3,6 +3,7 @@ const APP_ID = process.env.APP_ID
 const TALK_JS_SECRET = process.env.TALK_JS_SECRET
 let baseUrl = `https://api.talkjs.com/v1/${APP_ID}`
 
+
 class ChatController{
   static  async createConversation(req, res){
       try {
@@ -19,6 +20,7 @@ class ChatController{
             Authorization: `Bearer ${TALK_JS_SECRET}`
           }}
         )
+
         res.status(200).json({message: 'success created/updated conversation'})
       } catch (error) {
         res.status(500).json(error.message)
@@ -36,6 +38,30 @@ class ChatController{
         }}
       )
       res.status(200).json({message: `success delete conversattion with id ${conversationId}`})
+    } catch (error) {
+      res.status(500).json(error.message)
+    }
+  }
+
+  static async sendMessages(req, res){
+    try {
+      const user = req.user.id
+      const chat = req.body.chat
+      const conversationId = req.headers.conversation_id
+      let apiUrl = `${baseUrl}/conversations/${conversationId}/messages`
+      const resp = await axios.post(
+        apiUrl,
+        [{
+          text: chat,
+          sender: `${user}`,
+          type: "UserMessage"
+        }],
+        { headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${TALK_JS_SECRET}`
+        }}
+      )
+      res.status(200).json({data: resp.data})
     } catch (error) {
       res.status(500).json(error.message)
     }
