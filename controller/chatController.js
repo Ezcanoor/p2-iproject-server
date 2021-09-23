@@ -61,6 +61,7 @@ class ChatController{
           Authorization: `Bearer ${TALK_JS_SECRET}`
         }}
       )
+      // insyallah lulus
       res.status(200).json({data: resp.data})
     } catch (error) {
       res.status(500).json(error.message)
